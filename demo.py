@@ -1,5 +1,5 @@
 """
-demo.py
+app.py
 -------
 Fast interactive inference script for English → Bengali translation.
 Loads the base Helsinki-NLP/opus-mt-en-bn model with the saved LoRA adapter
