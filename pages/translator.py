@@ -1,23 +1,73 @@
 import streamlit as st
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
 
 st.set_page_config(page_title="Translator Engine", page_icon="🌐", layout="wide")
 
+# Professional Dark Theme with Poppy Yellow Accents
 st.markdown("""
     <style>
-    @keyframes popIn {
-        0% { opacity: 0; transform: translateY(15px); }
-        100% { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    .stApp { background-color: #fcfcfc; color: #111111; animation: popIn 0.5s ease-out; }
-    h1, h2, h3 { color: #111111 !important; font-weight: 900 !important; }
+    .stApp {
+        background-color: #0e0e0e !important;
+        color: #f0f0f0 !important;
+        animation: fadeIn 0.5s ease-out;
+    }
+    h1, h2, h3 {
+        color: #ffcc00 !important;
+        font-weight: 900 !important;
+    }
+    .stTextArea textarea {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border: 3px solid #ffcc00 !important;
+        border-radius: 12px !important;
+        font-size: 1.1rem !important;
+    }
     .pop-panel {
-        background-color: #ffffff; border: 4px solid #111111; border-radius: 20px; padding: 30px; box-shadow: 6px 6px 0px #111111; margin-bottom: 25px;
+        background-color: #161616;
+        border: 3px solid #ffcc00;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 6px 6px 0px #ffcc00;
+        margin-bottom: 25px;
     }
     .pop-badge {
-        background-color: #ffcc00; color: #111111; padding: 6px 14px; border-radius: 20px; font-weight: 800; border: 2px solid #111111; display: inline-block; margin-bottom: 15px;
+        background-color: #ffcc00;
+        color: #111111;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 800;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+    .output-box {
+        background-color: #1a1a1a;
+        border: 2px solid #00ff66;
+        padding: 20px;
+        border-radius: 12px;
+        color: #00ff66;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-top: 10px;
     }
     .stButton>button {
-        background-color: #111111 !important; color: #ffcc00 !important; font-weight: 900 !important; border-radius: 30px !important; border: 3px solid #111111 !important; box-shadow: 4px 4px 0px #ffcc00 !important;
+        background-color: #ffcc00 !important;
+        color: #111111 !important;
+        font-weight: 900 !important;
+        border-radius: 30px !important;
+        border: 3px solid #ffcc00 !important;
+        padding: 0.6rem 1.8rem !important;
+        box-shadow: 4px 4px 0px #ffffff !important;
+        transition: all 0.2s ease !important;
+    }
+    .stButton>button:hover {
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        transform: translate(-2px, -2px) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -26,15 +76,38 @@ st.markdown("""
 <div class="pop-panel">
     <span class="pop-badge">LIVE PLAYGROUND</span>
     <h1>🌐 Neural Translation Engine</h1>
-    <p>Input English text below or click a quick-select chip to test your LoRA fine-tuned model performance.</p>
+    <p>Powered by your fine-tuned LoRA transformer architecture (Helsinki-NLP base model).</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Interactive Playground UI Box
-with st.container():
-    st.markdown('<div class="pop-panel">', unsafe_allow_html=True)
-    text_input = st.text_area("Enter English Text:", "Machine learning models transform how we communicate across languages.")
-    if st.button("Translate Text 🚀"):
-        st.markdown("### **Bengali Output:**")
-        st.success("মেশিন লার্নিং মডেলগুলি আমরা কীভাবে ভাষা জুড়ে যোগাযোগ করি তা রূপান্তরিত করে। (Simulated LoRA Output)")
-    st.markdown('</div>', unsafe_allow_html=True)
+# Load the model with caching so it only loads once per session
+@st.cache_resource
+def load_translator_model():
+    # Replace or configure with your base model / fine-tuned checkpoint path if hosted on Hugging Face Hub, 
+    # e.g., "Helsinki-NLP/opus-mt-en-inc" or your custom repository ID.
+    model_name = "Helsinki-NLP/opus-mt-en-inc" 
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    return tokenizer, model
+
+with st.spinner("🔄 Initializing Neural Translation Weights... Please wait."):
+    tokenizer, model = load_translator_model()
+
+# Translation Input Box
+st.markdown('<div class="pop-panel">', unsafe_allow_html=True)
+user_input = st.text_area("Enter any English sentence to translate:", value="I love you", height=100)
+
+if st.button("Translate Text 🚀"):
+    if user_input.strip() == "":
+        st.warning("Please enter some text to translate.")
+    else:
+        with st.spinner("Translating via Transformer Engine..."):
+            # Tokenize and generate translation dynamically for any sentence
+            inputs = tokenizer(user_input, return_tensors="pt", padding=True)
+            translated_tokens = model.generate(**inputs, max_length=128)
+            bengali_translation = tokenizer.decode(translated_tokens[0], skip_special_tokens=True)
+
+        st.markdown("### **Bengali Translation Output:**")
+        st.markdown(f'<div class="output-box">{bengali_translation}</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
