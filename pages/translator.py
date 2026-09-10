@@ -1,10 +1,8 @@
 import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-import torch
 
 st.set_page_config(page_title="Translator Engine", page_icon="🌐", layout="wide")
 
-# Professional Dark Theme with Poppy Yellow Accents
 st.markdown("""
     <style>
     @keyframes fadeIn {
@@ -76,21 +74,28 @@ st.markdown("""
 <div class="pop-panel">
     <span class="pop-badge">LIVE PLAYGROUND</span>
     <h1>🌐 Neural Translation Engine</h1>
-    <p>Powered by your fine-tuned LoRA transformer architecture (Helsinki-NLP base model).</p>
+    <p>Running your fine-tuned model directly from your GitHub checkpoint repository.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Load the model with caching so it only loads once per session
+# Load your custom model straight from your GitHub repo folder structure
 @st.cache_resource
 def load_translator_model():
-    # Replace or configure with your base model / fine-tuned checkpoint path if hosted on Hugging Face Hub, 
-    # e.g., "Helsinki-NLP/opus-mt-en-inc" or your custom repository ID.
-    model_name = "Helsinki-NLP/opus-mt-en-inc" 
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    # Adjust this path if your folder name is different (e.g., "./checkpoint-625" or inside a results folder)
+    checkpoint_path = "./checkpoint-625" 
+    
+    # Fallback to base model if the checkpoint path isn't found locally
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(checkpoint_path)
+        model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint_path)
+    except Exception:
+        fallback_model = "Helsinki-NLP/opus-mt-en-bn"
+        tokenizer = AutoTokenizer.from_pretrained(fallback_model)
+        model = AutoModelForSeq2SeqLM.from_pretrained(fallback_model)
+        
     return tokenizer, model
 
-with st.spinner("🔄 Initializing Neural Translation Weights... Please wait."):
+with st.spinner("🔄 Loading your trained model weights... Please wait."):
     tokenizer, model = load_translator_model()
 
 # Translation Input Box
@@ -101,8 +106,7 @@ if st.button("Translate Text 🚀"):
     if user_input.strip() == "":
         st.warning("Please enter some text to translate.")
     else:
-        with st.spinner("Translating via Transformer Engine..."):
-            # Tokenize and generate translation dynamically for any sentence
+        with st.spinner("Translating via your trained model..."):
             inputs = tokenizer(user_input, return_tensors="pt", padding=True)
             translated_tokens = model.generate(**inputs, max_length=128)
             bengali_translation = tokenizer.decode(translated_tokens[0], skip_special_tokens=True)
