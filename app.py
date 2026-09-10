@@ -1,108 +1,124 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="English-Bengali NMT Portal",
+    page_title="LinguaPulse | EN-BN NMT Portal",
     page_icon="⚡",
     layout="wide"
 )
 
-# Poppy Studio Theme: Yellow (#FFCC00), Deep Black (#0a0a0a), Pure White (#ffffff)
 st.markdown("""
     <style>
-    @keyframes floatCard {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-5px); }
-        100% { transform: translateY(0px); }
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     .stApp {
-        background-color: #ffffff;
-        color: #0a0a0a;
-        animation: fadeIn 0.7s ease-out;
+        background-color: #fcfcfc;
+        color: #111111;
+        animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     h1, h2, h3 {
-        color: #0a0a0a !important;
-        font-weight: 800 !important;
+        color: #111111 !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.5px;
     }
-    .hero-banner {
-        background: #FFCC00;
-        border: 3px solid #0a0a0a;
-        padding: 45px;
-        border-radius: 20px;
-        text-align: left;
-        box-shadow: 6px 6px 0px #0a0a0a;
-        margin-bottom: 30px;
-        animation: fadeIn 0.8s ease-out;
+    .pop-hero {
+        background: #ffcc00;
+        border: 4px solid #111111;
+        border-radius: 28px;
+        padding: 50px 40px;
+        box-shadow: 10px 10px 0px #111111;
+        margin-bottom: 40px;
     }
-    .feature-card {
-        background-color: #f9f9f9;
-        border: 2px solid #0a0a0a;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 4px 4px 0px #0a0a0a;
+    .pop-card {
+        background-color: #ffffff;
+        border: 4px solid #111111;
+        border-radius: 22px;
+        padding: 35px 30px;
+        box-shadow: 7px 7px 0px #111111;
         transition: all 0.3s ease;
-        animation: fadeIn 0.9s ease-out;
         height: 100%;
     }
-    .feature-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 8px 8px 0px #0a0a0a;
-        background-color: #FFCC0022;
+    .pop-card:hover {
+        transform: translate(-4px, -4px);
+        box-shadow: 11px 11px 0px #ffcc00, 11px 11px 0px 4px #111111;
+    }
+    .pop-badge {
+        background-color: #111111;
+        color: #ffcc00;
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    .meta-tag {
+        background-color: #ffffff;
+        border: 2px solid #111111;
+        padding: 6px 14px;
+        border-radius: 15px;
+        font-weight: 700;
+        display: inline-block;
+        margin-right: 10px;
+        color: #111111;
+        box-shadow: 3px 3px 0px #111111;
     }
     .stButton>button {
-        background-color: #0a0a0a !important;
-        color: #FFCC00 !important;
-        font-weight: 700 !important;
-        border-radius: 10px !important;
-        border: 2px solid #0a0a0a !important;
-        padding: 0.6rem 1.2rem !important;
-        box-shadow: 3px 3px 0px #FFCC00;
-        transition: all 0.2s ease;
+        background-color: #111111 !important;
+        color: #ffcc00 !important;
+        font-weight: 900 !important;
+        border-radius: 40px !important;
+        border: 3px solid #111111 !important;
+        padding: 0.7rem 1.8rem !important;
+        box-shadow: 5px 5px 0px #ffcc00 !important;
+        transition: all 0.2s ease !important;
     }
     .stButton>button:hover {
-        background-color: #FFCC00 !important;
-        color: #0a0a0a !important;
-        box-shadow: 3px 3px 0px #0a0a0a;
-        transform: translate(-2px, -2px);
+        background-color: #ffcc00 !important;
+        color: #111111 !important;
+        transform: translate(-3px, -3px) !important;
+        box-shadow: 7px 7px 0px #111111 !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Hero Section
 st.markdown("""
-<div class="hero-banner">
-    <span style="background-color: #0a0a0a; color: #FFCC00; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem;">⚡ NMT STUDIO PROJECT</span>
-    <h1 style="font-size: 2.8rem; margin-top: 15px;">Collaborate Smarter. Translate Faster.</h1>
-    <p style="font-size: 1.2rem; font-weight: 500; color: #222222;">Advanced LoRA Fine-Tuned English-to-Bengali Transformer Architecture for Faculty Evaluation.</p>
-    <hr style="border: 1px solid #0a0a0a; margin: 20px 0;">
-    <p style="margin: 0; font-weight: 600;"><b>Lead Researcher:</b> Prastutee Borah &nbsp;|&nbsp; <b>Faculty Mentor:</b> Prof. Guha</p>
+<div class="pop-hero">
+    <div class="pop-badge">⚡ NIT Silchar Research Portal</div>
+    <h1>English-to-Bengali Neural Machine Translation Engine</h1>
+    <p style="font-size: 1.25rem; font-weight: 600;">Experience high-precision Low-Rank Adaptation (LoRA) fine-tuned transformer architectures built for superior linguistic preservation.</p>
+    <div>
+        <span class="meta-tag">👩‍💻 Lead: Prastutee Borah</span>
+        <span class="meta-tag">👨‍🏫 Mentor: Prof. Guha</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("### 🚀 Explore Studio Portals")
-st.write("Select a module below or use the sidebar to navigate seamlessly across mobile and desktop screens:")
+st.markdown("### 🎯 System Navigation Workspace")
 
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
     st.markdown("""
-    <div class="feature-card">
-        <h3>🌐 Translator Engine</h3>
-        <p>Experience the interactive playground equipped with quick-select chips, session translation history logs, and direct side-by-side model evaluation.</p>
+    <div class="pop-card">
+        <span class="pop-badge">Module 01</span>
+        <h3>🌐 Translator Playground</h3>
+        <p>Test real-time neural translations, pick from quick-select chips, examine audit history logs, and compare model outputs.</p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Launch Translator Playground ➔", use_container_width=True):
-        st.switch_page("pages/1_Translator.py")
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Launch Translator Engine ➔", use_container_width=True):
+        st.switch_page("pages/translator.py")
 
 with col2:
     st.markdown("""
-    <div class="feature-card">
+    <div class="pop-card">
+        <span class="pop-badge">Module 02</span>
         <h3>🔬 Project & Mentors</h3>
-        <p>Review comprehensive technical documentation, architecture abstracts, performance benchmarks, and dedicated mentor credits.</p>
+        <p>Review comprehensive architecture abstracts, evaluation metrics, system workflows, and formal faculty credits for Prof. Guha.</p>
     </div>
     """, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Open Documentation Hub ➔", use_container_width=True):
-        st.switch_page("pages/2_Project_Mentors.py")
+        st.switch_page("pages/documentation.py")
